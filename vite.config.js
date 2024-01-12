@@ -4,7 +4,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
-export default defineConfig({
+/* export default defineConfig({
   plugins: [
     vue(),
   ],
@@ -13,4 +13,16 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   }
+}) */
+
+
+//github pages
+export default defineConfig({
+  base: "/REPONAME/",
+  plugins: [],
+  resolve: {
+    alias: [
+
+    ]
+  },
 })
