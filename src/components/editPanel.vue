@@ -26,7 +26,7 @@ const lrcArr = ref([
     { "type": "00:00.00", "information": "鼠标移上来，最右侧按钮点击可选中", "showAddBtn": false },
     { "type": "00:00.00", "information": "选中后，点击工具栏铅笔，可填入此刻", "showAddBtn": false },
     { "type": "00:00.00", "information": "完成后，工具栏的锁，可以锁定预览", "showAddBtn": false },
-    { "type": "00:00.00", "information": "左上角可打开lrc文件，左上角可下载保存", "showAddBtn": false },
+    { "type": "00:00.00", "information": "左上角可打开lrc文件，右上角可下载保存", "showAddBtn": false },
     { "type": "00:00.00", "information": "", "showAddBtn": false },
     { "type": "00:00.00", "information": "", "showAddBtn": false }
 ])
