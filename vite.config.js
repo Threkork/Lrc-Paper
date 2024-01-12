@@ -6,6 +6,9 @@ import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "/Lrc-Paper/",
+  build: {
+    outDir: "docs"
+  },
   plugins: [
     vue(),
   ],
