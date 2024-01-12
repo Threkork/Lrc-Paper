@@ -8,6 +8,7 @@ const err = ref(true)
 </script>
 
 <template>
+  <div></div>
   <div middle>
     <editPanel></editPanel>
   </div>
