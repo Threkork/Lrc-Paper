@@ -1,10 +1,2 @@
 @import './base.css';
-
-/* Logo 字体 */
-@font-face {
-    font-family: "iconfont";
-    /* Project id 4376533 */
-    src: url('src/assets/font_icon/iconfont.woff2?t=1703485826707') format('woff2'),
-        url('src/assets/font_icon/iconfont.woff?t=1703485826707') format('woff'),
-        url('src/assets/font_icon/iconfont.ttf?t=1703485826707') format('truetype');
-}
+@import "@/assets/font_icon/iconfont.css";
