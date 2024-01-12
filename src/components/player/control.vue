@@ -9,6 +9,7 @@ const props = defineProps({
     currentTime: Number,
     audioVolume: Number,
     audioSpeed: Number,
+    durationTime: Number
 })
 
 const emit = defineEmits(['sonplay', 'sonpause', 'sonSetCurrentTime', 'sonInputFile', 'sonSetVolume', 'sonSetSpeed'])
@@ -26,7 +27,15 @@ const inputFile = () => {
 }
 
 const setCurrent = (seconds) => {
-    const newTime = props.currentTime + seconds
+    let newTime = props.currentTime
+    if (props.currentTime < -seconds) {
+        newTime = 0
+    } else if (props.currentTime + seconds > props.durationTime) {
+        newTime = props.durationTime
+    } else {
+        newTime = newTime + seconds
+    }
+
     emit('sonSetCurrentTime', newTime)
 }
 

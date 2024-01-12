@@ -162,9 +162,10 @@ watch(
                 </progressBar>
             </div>
             <div class="control">
-                <control :isPlay="isPlay" :currentTime="audioCurrentTime" :audioVolume="audioVolume"
-                    :audioSpeed="audioSpeed" @sonplay="play" @sonpause="pause" @sonSetCurrentTime="setCurrentTime"
-                    @sonInputFile="nextInputFile" @sonSetVolume="setVolume" @sonSetSpeed="setPlaybackRate">
+                <control :isPlay="isPlay" :currentTime="audioCurrentTime" :durationTime="audioDuration"
+                    :audioVolume="audioVolume" :audioSpeed="audioSpeed" @sonplay="play" @sonpause="pause"
+                    @sonSetCurrentTime="setCurrentTime" @sonInputFile="nextInputFile" @sonSetVolume="setVolume"
+                    @sonSetSpeed="setPlaybackRate">
                 </control>
             </div>
         </div>

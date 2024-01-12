@@ -1,9 +1,17 @@
 <script setup>
 import { ref, } from 'vue'
-const emit = defineEmits(['isLock'])
+const emit = defineEmits(['isLock', 'nowChangeLrcRow', 'newPushLrcRow'])
 
 const changeLock = () => {
     emit('isLock')
+}
+
+const nowChangeLrcRow = () => {
+    emit('nowChangeLrcRow')
+}
+
+const newPushLrcRow = () => {
+    emit('newPushLrcRow')
 }
 
 
@@ -12,10 +20,10 @@ const changeLock = () => {
 <template>
     <div>
         <div class="main">
+            <button class="iconfont" @click="newPushLrcRow">&#xeb78;</button>
+            <button class="iconfont" @click="nowChangeLrcRow">&#xe7c8;</button>
             <button class="iconfont" @click="changeLock">&#xe642;</button>
-            <button class="iconfont" @click="changeLock">&#xe642;</button>
-            <button class="iconfont" @click="changeLock">&#xe642;</button>
-            <button class="iconfont" @click="changeLock">&#xe642;</button>
+            <!-- <button class="iconfont" @click="changeLock">&#xe642;</button> -->
         </div>
     </div>
 </template>

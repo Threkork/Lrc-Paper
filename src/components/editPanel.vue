@@ -4,6 +4,7 @@ import tool from '@/components/editPanel/tool.vue'
 import { ref, watch, computed, inject, onMounted } from 'vue'
 import bus from '@/components/plugin/bus.js'
 
+const fileName = ref('Music-Name')
 const lrcListDom = ref([])
 
 const isLockCurrent = ref(true)
@@ -21,7 +22,14 @@ onMounted(() => {
 })
 
 const InputlrcStr = ref('')
-const lrcArr = ref([])
+const lrcArr = ref([
+    { "type": "00:00.00", "information": "鼠标移上来，最右侧按钮点击可选中", "showAddBtn": false },
+    { "type": "00:00.00", "information": "选中后，点击工具栏铅笔，可填入此刻", "showAddBtn": false },
+    { "type": "00:00.00", "information": "完成后，工具栏的锁，可以锁定预览", "showAddBtn": false },
+    { "type": "00:00.00", "information": "左上角可打开lrc文件，左上角可下载保存", "showAddBtn": false },
+    { "type": "00:00.00", "information": "", "showAddBtn": false },
+    { "type": "00:00.00", "information": "", "showAddBtn": false }
+])
 
 const saveLrcToFile = () => {
     let lrcContent = "";
@@ -36,7 +44,12 @@ const saveLrcToFile = () => {
 
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "userInput.lrc";
+    if (fileName.value === '') {
+        a.download = `LrcPaper.lrc`;
+    } else {
+        a.download = `${fileName.value}.lrc`;
+    }
+
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -81,7 +94,7 @@ function parseLRC(lrcString) {
 const handleInputLrc = (event) => {
     const fileInput = event.target;
     const file = fileInput.files[0];
-
+    console.log(file);
     if (file) {
         const reader = new FileReader();
 
@@ -91,6 +104,7 @@ const handleInputLrc = (event) => {
         };
 
         reader.readAsText(file)
+        fileName.value = file.name.substring(0, file.name.lastIndexOf("."))
     }
 }
 
@@ -113,6 +127,7 @@ const deleteRow = (index) => {
 const nowAddRow = () => {
     const newLrcItem = createLRCrow(audioFormatCurrent.value)
     lrcArr.value.push(newLrcItem)
+    anchorPosition(lrcArr.value.length - 2)
 }
 
 const anchorPosition = (index) => {
@@ -143,7 +158,6 @@ watch(
         const findIndex = () => {
 
             for (let index = 0; index <= lrcArr.value.length; index++) {
-                console.log(index);
                 if (lrcArr.value.length === index) {
 
                     if (lrcArr.value.length === 0) {
@@ -210,18 +224,51 @@ watch(
         } */
     })
 
+const selectedCurrentIndex = ref(-1)
+
+const changeSelectedCurrentIndex = (index) => {
+    if (index === selectedCurrentIndex.value) {
+        selectedCurrentIndex.value = -1
+        return
+    }
+    selectedCurrentIndex.value = index
+}
+
+const nowChangeLrcRow = () => {
+    if (selectedCurrentIndex.value === -1) {
+        return
+    }
+    lrcArr.value[selectedCurrentIndex.value].type = audioFormatCurrent.value
+    selectedCurrentIndex.value += 1
+    if (selectedCurrentIndex.value == lrcArr.value.length) {
+        selectedCurrentIndex.value = -1
+    }
+    anchorPosition(selectedCurrentIndex.value)
+}
+
+
+
 </script>
 
 <template>
-    <tool @isLock="changeLockCurrentBool"></tool>
+    <tool @isLock="changeLockCurrentBool" @nowChangeLrcRow="nowChangeLrcRow" @newPushLrcRow="nowAddRow"></tool>
+
     <div class="main">
-        <input type="file" accept=".lrc" @change="handleInputLrc">
-        <button @click="saveLrcToFile">保存到文件</button>
+        <div class="file-box">
+            <label for="lrc-file-input" class="iconfont openfile">&#xe700;
+                <input v-show="false" id="lrc-file-input" type="file" accept=".lrc" @change="handleInputLrc">
+            </label>
+
+            <button class="iconfont" @click="saveLrcToFile">&#xe607;</button>
+        </div>
+        <div>
+            <input class=" inputBox inputName" v-model="fileName" :class="{ 'inputNull': fileName === '' }" />
+        </div>
         <div>
             <div class="space1"></div>
             <div v-for="(item, index) in   lrcArr  " :key="index" ref="lrcListDom" class="center lrc-row"
                 @mouseover="showAddBtn(index)" @mouseleave="hideAddBtn(index)">
-
+                <button v-show="item.showAddBtn" class="button-lrc-row" @click="changeSelectedCurrentIndex(index)"></button>
                 <input class=" inputBox inputType" v-model="item.type" :class="{ 'inputNull': item.type === '' }" />
                 <textarea class="inputBox inputInformation" v-model="item.information" rows="10"
                     :class="{ 'inputNull': item.information === '' }"></textarea>
@@ -232,27 +279,44 @@ watch(
                         @click="deleteRow(index)">
                         删除</div>
                 </div>
-                <div :class="{ 'lockCurrent': index === lockCurrentIndex }"></div>
+                <div v-show="index === lockCurrentIndex && -1 === selectedCurrentIndex" class="lockCurrent">
+                </div>
+                <div v-show="index === selectedCurrentIndex && selectedCurrentIndex !== -1" class="lockCurrent-lrc-row">
+                </div>
+
 
             </div>
             <div class="space1"></div>
         </div>
     </div>
-    <div @click="nowAddRow">此刻</div>
-    <div @click="changeLockCurrentBool">转跳</div>
     <div class="foot"></div>
 </template>
 
 <style scoped>
+.iconfont {
+    font-family: "iconfont" !important;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    -moz-user-select: none;
+    /*火狐*/
+    -webkit-user-select: none;
+    /*webkit浏览器*/
+    -ms-user-select: none;
+    /*IE10*/
+    -khtml-user-select: none;
+    /*早期浏览器*/
+    user-select: none;
+}
+
 .main {
     margin: 2% 20% 0;
     min-height: 900px;
     display: flex;
     flex-direction: column;
-    /* 将容器的主轴方向设置为垂直方向 */
-
     align-items: center;
-    /* 垂直方向居中 */
+
     border: 1px solid black;
     border-radius: 4px;
     background-color: white;
@@ -261,9 +325,7 @@ watch(
 .center {
     display: flex;
     justify-content: center;
-    /* 水平方向居中 */
     align-items: center;
-    /* 垂直方向居中 */
 }
 
 .lrc-row {
@@ -274,11 +336,32 @@ watch(
 .lockCurrent {
     position: absolute;
     width: 40vw;
-    top: 35px;
+    top: 34px;
     border-bottom-style: solid;
     border-color: black;
     border-width: 1px;
     z-index: 3;
+}
+
+.lockCurrent-lrc-row {
+    position: absolute;
+    width: 40vw;
+    top: 34px;
+    border-bottom-style: dashed;
+    border-color: black;
+    border-width: 1px;
+    z-index: 3;
+}
+
+.button-lrc-row {
+    position: absolute;
+    left: 13%;
+    width: 18px;
+    height: 18px;
+    border-width: 1px;
+    border-radius: 4px;
+    background-color: white;
+    margin-right: 10px;
 }
 
 .inputBox {
@@ -288,12 +371,28 @@ watch(
     margin-bottom: 5px;
 }
 
-
+.inputName {
+    position: relative;
+    resize: none;
+    width: 40vw;
+    height: 30px;
+    font-size: 22px;
+    text-align: center;
+    color: black;
+    border: none;
+    font-family: ARIAL, "Microsoft Yahei", "微软雅黑";
+}
 
 .inputType {
+    position: relative;
+    resize: none;
     width: 80px;
+    height: 30px;
     margin-right: 20px;
+    font-size: 18px;
+    color: black;
     border: none;
+    font-family: ARIAL, "Microsoft Yahei", "微软雅黑";
 }
 
 .inputInformation {
@@ -305,7 +404,6 @@ watch(
     color: black;
     border: none;
     font-family: ARIAL, "Microsoft Yahei", "微软雅黑";
-
 }
 
 .inputNull {
@@ -338,6 +436,29 @@ watch(
     border: 1px solid black;
     border-radius: 50%;
     background-color: white;
+}
+
+.file-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.file-box .openfile {
+    margin: 15px 15px 5px;
+    color: #000000;
+    padding: 0 0px 10px;
+    font-size: 22.5px;
+}
+
+.file-box button {
+    margin: 15px 15px 5px;
+    color: #000000;
+    padding: 0 0px 10px;
+    font-size: 27px;
+    background-color: white;
+    border: none;
 }
 
 .head {
