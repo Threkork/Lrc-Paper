@@ -1,11 +1,15 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import player from './components/player.vue';
 
 import editPanel from './components/editPanel.vue';
 
 const err = ref(true)
-</script>
+
+const isMobile = computed(() => {
+  return window.matchMedia("(max-width: 768px)").matches || window.matchMedia("(max-height: 768px)").matches;
+})
+</script> 
 
 <template>
   <div class="icon"><a href="https://github.com/Threkork/Lrc-Paper" target="_blank"><img
@@ -18,7 +22,7 @@ const err = ref(true)
 
   <player></player>
 
-  <div v-show="err" class="err">
+  <div v-show="err && isMobile" class="err">
     <p>
       error:页面暂不适配手机，真可惜，请用电脑使用吧
     </p>
